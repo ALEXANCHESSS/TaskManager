@@ -23,7 +23,7 @@ class Task(models.Model):
     description = models.TextField(blank=True, null=True)
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
-    date_done_before = models.DateTimeField()
+    date_done_before = models.DateTimeField(null=True)
     status = models.CharField(
         max_length=255, choices=Status.choices, default=Status.NEW
     )
