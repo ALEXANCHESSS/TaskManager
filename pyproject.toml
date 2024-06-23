@@ -13,6 +13,7 @@ psycopg2-binary = "^2.9.9"
 ipython = "^8.25.0"
 django-extensions = "^3.2.3"
 djangorestframework = "^3.15.1"
+django-filter = "^24.2"
 
 [tool.poetry.dev-dependencies]
 
