@@ -1,8 +1,8 @@
 import django_filters
 
-from models.tag import Tag
-from models.task import Task
-from models.user import User
+from .models.tag import Tag
+from .models.task import Task
+from .models.user import User
 
 
 class UserFilter(django_filters.FilterSet):
