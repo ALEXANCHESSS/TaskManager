@@ -36,6 +36,7 @@ class Task(models.Model):
     performer_task = models.ForeignKey(
         User, on_delete=models.SET_NULL, related_name="performer_tasks", null=True
     )
+    tags = models.ManyToManyField("Tag", related_name="tasks")
 
     def __str__(self):
         return self.title
