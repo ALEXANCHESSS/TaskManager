@@ -22,9 +22,9 @@ from main.views import TagViewSet, TaskViewSet, UserViewSet
 from rest_framework import routers
 
 router = routers.SimpleRouter()
-router.register(r"users", UserViewSet, basename="users")
-router.register(r"tasks", TaskViewSet, basename="tasks")
-router.register(r"tags", TagViewSet, basename="tags")
+router.register(r"users", UserViewSet, basename="user")
+router.register(r"tasks", TaskViewSet, basename="task")
+router.register(r"tags", TagViewSet, basename="tag")
 
 urlpatterns = [
     path("admin/", task_manager_admin_site.urls),

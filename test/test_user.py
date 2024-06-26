@@ -8,35 +8,34 @@ from rest_framework.test import APIClient, APITestCase
 from main.models import Tag, Task, User
 
 
-class TestAdmin(APITestCase):
+class TestUser(APITestCase):
     client: APIClient
-    admin: User
+    user: User
 
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
-        cls.admin = User.objects.create_superuser(
-            username="test", email="test@test.ru", password="12345678"
+        cls.user = User.objects.create(
+            username="test1", email="test1@test.ru", password="12345678"
         )
 
     @classmethod
     def setUp(cls):
         cls.client = APIClient()
-        cls.client.force_login(cls.admin)
+        cls.client.force_login(cls.user)
 
     @classmethod
     def get_assert_forms(
         cls, model: Type[models.Model], key: int, check_actions: Container = ()
     ) -> None:
-        app_label = model._meta.app_label
         model_name = model._meta.model_name
 
-        actions = {"changelist": [], "add": [], "change": (key,)}
+        actions = {"list": [], "detail": (key,)}
         if check_actions:
             actions = {key: val for key, val in actions.items() if key in check_actions}
 
         for action, args in actions.items():
-            url = reverse(f"admin:{app_label}_{model_name}_{action}", args=args)
+            url = reverse(f"{model_name}-{action}", args=args)
             response = cls.client.get(url)
             assert response.status_code == HTTPStatus.OK, response.content
 
@@ -45,17 +44,17 @@ class TestAdmin(APITestCase):
         model_name = model._meta.model_name
         url = reverse(f"{model_name}-detail", args=[key])
         response = cls.client.delete(url)
-        assert response.status_code == HTTPStatus.NO_CONTENT, response.content
+        assert response.status_code == HTTPStatus.FORBIDDEN, response.content
 
     def test_get_user(self) -> None:
-        self.get_assert_forms(User, self.admin.id)
+        self.get_assert_forms(User, self.user.id)
 
     def test_get_tag(self) -> None:
         tag = Tag.objects.create()
         self.get_assert_forms(Tag, tag.id)
 
     def test_get_task(self) -> None:
-        task = Task.objects.create(author_task_id=self.admin.id)
+        task = Task.objects.create(author_task_id=self.user.id)
         self.get_assert_forms(Task, task.id)
 
     def test_delete_user(self) -> None:
@@ -67,5 +66,5 @@ class TestAdmin(APITestCase):
         self.delete_assert_forms(Tag, tag.id)
 
     def test_delete_task(self) -> None:
-        task = Task.objects.create(author_task_id=self.admin.id)
+        task = Task.objects.create(author_task_id=self.user.id)
         self.delete_assert_forms(Task, task.id)

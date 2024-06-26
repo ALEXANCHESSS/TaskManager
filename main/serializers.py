@@ -20,6 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    author_task = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Task
         fields = (
