@@ -6,6 +6,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 
 from main.models import Tag, Task, User
+from main.models.status import Status
 
 
 class TestAdmin(APITestCase):
@@ -58,6 +59,10 @@ class TestAdmin(APITestCase):
         task = Task.objects.create(author_task_id=self.admin.id)
         self.get_assert_forms(Task, task.id)
 
+    def test_get_status(self) -> None:
+        status = Status.objects.create()
+        self.get_assert_forms(Status, status.id)
+
     def test_delete_user(self) -> None:
         user = User.objects.create()
         self.delete_assert_forms(User, user.id)
@@ -69,3 +74,7 @@ class TestAdmin(APITestCase):
     def test_delete_task(self) -> None:
         task = Task.objects.create(author_task_id=self.admin.id)
         self.delete_assert_forms(Task, task.id)
+
+    def test_delete_status(self) -> None:
+        status = Status.objects.create()
+        self.delete_assert_forms(Status, status.id)

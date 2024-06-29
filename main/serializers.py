@@ -22,7 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    author_task = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    author_task = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault()
+    )
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
 
     class Meta:
@@ -40,6 +42,10 @@ class TaskSerializer(serializers.ModelSerializer):
             "performer_task",
             "tags",
         )
+
+    def create(self, validated_data):
+        validated_data["author_task"] = self.context["request"].user
+        return super().create(validated_data)
 
 
 class TagSerializer(serializers.ModelSerializer):
