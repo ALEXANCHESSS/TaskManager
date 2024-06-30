@@ -19,7 +19,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.select_related("author_task", "performer_task").all()
+    queryset = (
+        Task.objects.select_related("author_task", "performer_task")
+        .prefetch_related("tags")
+        .all()
+    )
     serializer_class = TaskSerializer
     filterset_class = TaskFilter
     permission_classes = [IsAuthenticated, DeleteAdminOnly]

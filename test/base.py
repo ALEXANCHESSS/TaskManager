@@ -1,8 +1,9 @@
 from http import HTTPStatus
 from faker import Faker
-from typing import List, Union
+from typing import Any, List, Union
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
+from rest_framework.response import Response
 
 from main.models.user import User
 
@@ -39,6 +40,12 @@ class TestViewSetBase(APITestCase):
     def list_url(cls, args: List[Union[str, int]] = None) -> str:
         return reverse(f"{cls.basename}-list", args=args)
 
+    def request_create(
+        self, data: dict, args: List[Union[str, int]] = None, **kwargs: Any
+    ) -> Response:
+        url = self.list_url(args)
+        return self.client.post(url, data=data, **kwargs)  # type: ignore
+
     def list(self, data: dict = None, args: List[Union[str, int]] = None) -> dict:
         if self.user:
             self.client.force_login(self.user)
@@ -59,10 +66,12 @@ class TestViewSetBase(APITestCase):
             assert response.status_code == HTTPStatus.FORBIDDEN, response.content
         return response.data
 
-    def create(self, data: dict, args: List[Union[str, int]] = None) -> dict:
+    def create(
+        self, data: dict, args: List[Union[str, int]] = None, **kwargs: Any
+    ) -> dict:
         if self.user:
             self.client.force_login(self.user)
-        response = self.client.post(self.list_url(args), data=data)
+        response = self.request_create(data, args, **kwargs)
         if self.user:
             self.assert_details(response.data, data)
             assert response.status_code == HTTPStatus.CREATED, response.content

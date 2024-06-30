@@ -22,7 +22,7 @@ class TestTaskViewSet(TestViewSetBase):
             "performer_task": user.id,
             "tags": [tag1.id, tag2.id],
         }
-        self.create(task_data)
+        self.create(task_data, format="json")
 
     def test_list(self):
         TaskFactory.create()
