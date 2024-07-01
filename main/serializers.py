@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from main.models.status import Status
+
 from .models.tag import Tag
 from .models.task import Task
 from .models.user import User
@@ -20,6 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    author_task = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+
     class Meta:
         model = Task
         fields = (
@@ -33,12 +38,8 @@ class TaskSerializer(serializers.ModelSerializer):
             "priority",
             "author_task",
             "performer_task",
+            "tags",
         )
-
-    def validate_status(self, value):
-        if value not in Task.Status.values:
-            raise serializers.ValidationError("Invalid status")
-        return value
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -47,4 +48,13 @@ class TagSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
+        )
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = (
+            "id",
+            "status",
         )
