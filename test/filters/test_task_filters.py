@@ -10,23 +10,25 @@ class TestUserViewSet(TestViewSetBase):
         task1 = TaskFactory.create()
         task2 = TaskFactory.create()
         task3 = TaskFactory.create()
+
         response = self.list({"title": task1.title})
         title = [task["title"] for task in response]
 
-        self.assertIn(task1.title, title)
-        self.assertNotIn(task2.title, title)
-        self.assertNotIn(task3.title, title)
+        assert task1.title in title
+        assert task2.title not in title
+        assert task3.title not in title
 
     def test_filter_status(self):
         task1 = TaskFactory.create()
         task2 = TaskFactory.create()
         task3 = TaskFactory.create()
+
         response = self.list({"status": task1.status.id})
         status = [task["status"] for task in response]
 
-        self.assertIn(task1.status.id, status)
-        self.assertNotIn(task2.status.id, status)
-        self.assertNotIn(task3.status.id, status)
+        assert task1.status.id in status
+        assert task2.status.id not in status
+        assert task3.status.id not in status
 
     def test_filter_tag(self):
         task1 = TaskFactory.create()
@@ -38,31 +40,34 @@ class TestUserViewSet(TestViewSetBase):
         task1.tags.add(tag1)
         task2.tags.add(tag2)
         task3.tags.add(tag3)
+
         response = self.list({"tags": tag1.title})
         tags = [task["tags"][0] for task in response]
 
-        self.assertIn(tag1.id, tags)
-        self.assertNotIn(tag2.id, tags)
-        self.assertNotIn(tag3.id, tags)
+        assert tag1.id in tags
+        assert tag2.id not in tags
+        assert tag3.id not in tags
 
     def test_filter_author_task(self):
         task1 = TaskFactory.create()
         task2 = TaskFactory.create()
         task3 = TaskFactory.create()
+
         response = self.list({"author_task": task1.author_task.id})
         author_task = [task["author_task"] for task in response]
 
-        self.assertIn(task1.author_task.id, author_task)
-        self.assertNotIn(task2.author_task.id, author_task)
-        self.assertNotIn(task3.author_task.id, author_task)
+        assert task1.author_task.id in author_task
+        assert task2.author_task.id not in author_task
+        assert task3.author_task.id not in author_task
 
     def test_filter_performer_task(self):
         task1 = TaskFactory.create()
         task2 = TaskFactory.create()
         task3 = TaskFactory.create()
+
         response = self.list({"performer_task": task1.performer_task.id})
         performer_task = [task["performer_task"] for task in response]
 
-        self.assertIn(task1.performer_task.id, performer_task)
-        self.assertNotIn(task2.performer_task.id, performer_task)
-        self.assertNotIn(task3.performer_task.id, performer_task)
+        assert task1.performer_task.id in performer_task
+        assert task2.performer_task.id not in performer_task
+        assert task3.performer_task.id not in performer_task

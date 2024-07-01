@@ -85,8 +85,9 @@ class TestViewSetBase(APITestCase):
         if self.user:
             self.client.force_login(self.user)
         response = self.client.delete(self.detail_url(key))
-        if self.user:
-            assert response.status_code == HTTPStatus.FORBIDDEN, response.content
+
+        if self.user and self.user.is_staff:
+            assert response.status_code == HTTPStatus.NO_CONTENT, response.content
         else:
             assert response.status_code == HTTPStatus.FORBIDDEN, response.content
         return response.data
