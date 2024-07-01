@@ -3,10 +3,10 @@ from django.shortcuts import render
 from rest_framework import viewsets
 
 from .filters import TaskFilter, UserFilter
-from models.tag import Tag
-from models.task import Task
-from models.user import User
-from serializers import TaskSerializer, UserSerializer
+from .models.tag import Tag
+from .models.task import Task
+from .models.user import User
+from .serializers import TagSerializer, TaskSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -22,5 +22,5 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.prefetch_related("task").all()
-    serializer_class = TaskSerializer
+    queryset = Tag.objects.prefetch_related("tasks").all()
+    serializer_class = TagSerializer
