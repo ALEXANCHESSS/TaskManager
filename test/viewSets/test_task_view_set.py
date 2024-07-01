@@ -1,7 +1,13 @@
 from base import faker
 from main.models.task import Task
 from test.base import TestViewSetBase
-from test.factories import StatusFactory, TagFactory, TaskFactory, UserFactory
+from test.factories import (
+    AdminFactory,
+    StatusFactory,
+    TagFactory,
+    TaskFactory,
+    UserFactory,
+)
 
 
 class TestTaskViewSet(TestViewSetBase):
@@ -13,7 +19,6 @@ class TestTaskViewSet(TestViewSetBase):
         status = StatusFactory.create()
         tag1 = TagFactory.create()
         tag2 = TagFactory.create()
-
         task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
@@ -22,22 +27,28 @@ class TestTaskViewSet(TestViewSetBase):
             "performer_task": user.id,
             "tags": [tag1.id, tag2.id],
         }
+
         self.create(task_data)
 
     def test_list(self):
-        TaskFactory.create()
-        self.list()
+        task = TaskFactory.create()
+
+        response = self.list()
+
+        assert response[0]["title"] == task.title
 
     def test_retrieve(self):
         task = TaskFactory.create()
-        self.retrieve(task.id)
+
+        response = self.retrieve(task.id)
+
+        assert response["title"] == task.title
 
     def test_update(self):
         user = UserFactory.create()
         task = TaskFactory.create()
         status = StatusFactory.create()
         tag = TagFactory.create()
-
         new_task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
@@ -46,10 +57,12 @@ class TestTaskViewSet(TestViewSetBase):
             "performer_task": user.id,
             "tags": [tag.id],
         }
+
         self.update(task.id, new_task_data)
 
     def test_delete(self):
         task = TaskFactory.create()
+
         self.delete(task.id)
 
 
@@ -60,7 +73,6 @@ class TestTaskNoAuthViewSet(TestViewSetBase):
     def test_create(self):
         user = UserFactory.create()
         status = StatusFactory.create()
-
         task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
@@ -68,21 +80,23 @@ class TestTaskNoAuthViewSet(TestViewSetBase):
             "status": status.id,
             "performer_task": user.id,
         }
+
         self.create(task_data)
 
     def test_list(self):
         TaskFactory.create()
+
         self.list()
 
     def test_retrieve(self):
         task = TaskFactory.create()
+
         self.retrieve(task.id)
 
     def test_update(self):
         user = UserFactory.create()
         task = TaskFactory.create()
         status = StatusFactory.create()
-
         new_task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
@@ -90,8 +104,20 @@ class TestTaskNoAuthViewSet(TestViewSetBase):
             "status": status.id,
             "performer_task": user.id,
         }
+
         self.update(task.id, new_task_data)
 
     def test_delete(self):
         task = TaskFactory.create()
+
+        self.delete(task.id)
+
+
+class TestTaskAdminOnlyDeleteViewSet(TestViewSetBase):
+    basename = "task"
+    user_attributes = AdminFactory
+
+    def test_delete(self):
+        task = TaskFactory.create()
+
         self.delete(task.id)

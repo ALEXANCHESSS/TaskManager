@@ -1,7 +1,7 @@
 from base import faker
 
 from test.base import TestViewSetBase
-from test.factories import StatusFactory, UserFactory
+from test.factories import AdminFactory, StatusFactory, UserFactory
 
 
 class TestStatusViewSet(TestViewSetBase):
@@ -12,25 +12,34 @@ class TestStatusViewSet(TestViewSetBase):
         status_data = {
             "status": faker.word(),
         }
+
         self.create(status_data)
 
     def test_list(self):
-        StatusFactory.create()
-        self.list()
+        status = StatusFactory.create()
+
+        response = self.list()
+
+        assert response[0]["status"] == status.status
 
     def test_retrieve(self):
         status = StatusFactory.create()
-        self.retrieve(status.id)
+
+        response = self.retrieve(status.id)
+
+        assert response["status"] == status.status
 
     def test_update(self):
         status = StatusFactory.create()
         new_status_data = {
             "status": faker.word(),
         }
+
         self.update(status.id, new_status_data)
 
     def test_delete(self):
         status = StatusFactory.create()
+
         self.delete(status.id)
 
 
@@ -42,14 +51,17 @@ class TestStatusNoAuthViewSet(TestViewSetBase):
         status_data = {
             "status": faker.word(),
         }
+
         self.create(status_data)
 
     def test_list(self):
         StatusFactory.create()
+
         self.list()
 
     def test_retrieve(self):
         status = StatusFactory.create()
+
         self.retrieve(status.id)
 
     def test_update(self):
@@ -57,8 +69,20 @@ class TestStatusNoAuthViewSet(TestViewSetBase):
         new_status_data = {
             "status": faker.word(),
         }
+
         self.update(status.id, new_status_data)
 
     def test_delete(self):
         status = StatusFactory.create()
+
+        self.delete(status.id)
+
+
+class TestStatusAdminOnlyDeleteViewSet(TestViewSetBase):
+    basename = "status"
+    user_attributes = AdminFactory
+
+    def test_delete(self):
+        status = StatusFactory.create()
+
         self.delete(status.id)

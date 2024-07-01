@@ -1,7 +1,7 @@
 from base import faker
 
 from test.base import TestViewSetBase
-from test.factories import TagFactory, UserFactory
+from test.factories import AdminFactory, TagFactory, UserFactory
 
 
 class TestTagViewSet(TestViewSetBase):
@@ -12,25 +12,34 @@ class TestTagViewSet(TestViewSetBase):
         tag_data = {
             "title": faker.sentence(),
         }
+
         self.create(tag_data)
 
     def test_list(self):
-        TagFactory.create()
-        self.list()
+        tag = TagFactory.create()
+
+        response = self.list()
+
+        assert response[0]["title"] == tag.title
 
     def test_retrieve(self):
         tag = TagFactory.create()
-        self.retrieve(tag.id)
+
+        response = self.retrieve(tag.id)
+
+        assert response["title"] == tag.title
 
     def test_update(self):
         tag = TagFactory.create()
         new_tag_data = {
             "title": faker.sentence(),
         }
+
         self.update(tag.id, new_tag_data)
 
     def test_delete(self):
         tag = TagFactory.create()
+
         self.delete(tag.id)
 
 
@@ -42,14 +51,17 @@ class TestTagNoAuthViewSet(TestViewSetBase):
         tag_data = {
             "title": faker.sentence(),
         }
+
         self.create(tag_data)
 
     def test_list(self):
         TagFactory.create()
+
         self.list()
 
     def test_retrieve(self):
         tag = TagFactory.create()
+
         self.retrieve(tag.id)
 
     def test_update(self):
@@ -57,8 +69,20 @@ class TestTagNoAuthViewSet(TestViewSetBase):
         new_tag_data = {
             "title": faker.sentence(),
         }
+
         self.update(tag.id, new_tag_data)
 
     def test_delete(self):
         tag = TagFactory.create()
+
+        self.delete(tag.id)
+
+
+class TestTagAdminOnlyDeleteViewSet(TestViewSetBase):
+    basename = "tag"
+    user_attributes = AdminFactory
+
+    def test_delete(self):
+        tag = TagFactory.create()
+
         self.delete(tag.id)
