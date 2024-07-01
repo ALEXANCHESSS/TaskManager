@@ -6,6 +6,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 
 from main.models import Tag, Task, User
+from main.models.status import Status
 
 
 class TestAdmin(APITestCase):
@@ -40,13 +41,17 @@ class TestAdmin(APITestCase):
             response = cls.client.get(url)
             assert response.status_code == HTTPStatus.OK, response.content
 
-    def test_user(self) -> None:
+    def test_get_user(self) -> None:
         self.assert_forms(User, self.admin.id)
 
-    def test_tag(self) -> None:
+    def test_get_tag(self) -> None:
         tag = Tag.objects.create()
         self.assert_forms(Tag, tag.id)
 
-    def test_task(self) -> None:
+    def test_get_task(self) -> None:
         task = Task.objects.create(author_task_id=self.admin.id)
         self.assert_forms(Task, task.id)
+
+    def test_get_status(self) -> None:
+        status = Status.objects.create()
+        self.assert_forms(Status, status.id)
