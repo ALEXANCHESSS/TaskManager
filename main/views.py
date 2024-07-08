@@ -7,7 +7,8 @@ from .filters import TaskFilter, UserFilter
 from .models.tag import Tag
 from .models.task import Task
 from .models.user import User
-from .serializers import TagSerializer, TaskSerializer, UserSerializer
+from .models.status import Status
+from .serializers import StatusSerializer, TagSerializer, TaskSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,4 +28,10 @@ class TaskViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.prefetch_related("tasks").all()
     serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated, DeleteAdminOnly]
+
+
+class StatusViewSet(viewsets.ModelViewSet):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
     permission_classes = [IsAuthenticated, DeleteAdminOnly]

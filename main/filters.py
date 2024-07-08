@@ -1,5 +1,6 @@
 import django_filters
 
+from .models.status import Status
 from .models.tag import Tag
 from .models.task import Task
 from .models.user import User
@@ -14,7 +15,7 @@ class UserFilter(django_filters.FilterSet):
 
 
 class TaskFilter(django_filters.FilterSet):
-    status = django_filters.ChoiceFilter(choices=Task.Status.choices)
+    status = django_filters.ModelChoiceFilter(queryset=Status.objects.all())
     tags = django_filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(), field_name="tags__title", to_field_name="title"
     )
