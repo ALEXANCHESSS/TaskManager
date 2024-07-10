@@ -35,8 +35,8 @@ class TestViewSetBase(APITestCase):
                     "performer_task"
                 ]["id"]
             elif key == "tags":
-                response_tags = [tag["id"] for tag in response_data["tags"]]
-                assert set(response_tags) == set(value), response_tags
+                response_tags = [tag["title"] for tag in response_data["tags"]]
+                assert value == response_tags, (response_tags, value)
             else:
                 assert response_data.get(key) == value, response_data.get(key)
 

@@ -4,7 +4,6 @@ from test.base import TestViewSetBase
 from test.factories import (
     AdminFactory,
     StatusFactory,
-    TagFactory,
     TaskFactory,
     UserFactory,
 )
@@ -17,15 +16,14 @@ class TestTaskViewSet(TestViewSetBase):
     def test_create(self):
         user = UserFactory.create()
         status = StatusFactory.create()
-        tag1 = TagFactory.create()
-        tag2 = TagFactory.create()
+        tag1, tag2 = faker.word(), faker.word()
         task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
             "priority": faker.random_element(Task.Priority.values),
             "status": status.id,
             "performer_task": user.id,
-            "tags": [tag1.id, tag2.id],
+            "tags": [tag1, tag2],
         }
         self.create(task_data, format="json")
 
@@ -47,14 +45,14 @@ class TestTaskViewSet(TestViewSetBase):
         user = UserFactory.create()
         task = TaskFactory.create()
         status = StatusFactory.create()
-        tag = TagFactory.create()
+        tag = faker.word()
         new_task_data = {
             "title": faker.sentence(),
             "description": faker.sentence(),
             "priority": faker.random_element(Task.Priority.values),
             "status": status.id,
             "performer_task": user.id,
-            "tags": [tag.id],
+            "tags": [tag],
         }
 
         self.update(task.id, new_task_data)
