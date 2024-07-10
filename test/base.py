@@ -29,7 +29,15 @@ class TestViewSetBase(APITestCase):
     @classmethod
     def assert_details(cls, response_data, expected_data):
         for key, value in expected_data.items():
-            assert response_data.get(key) == value
+            if key == "performer_task":
+                assert response_data["performer_task"]["id"] == value, response_data[
+                    "performer_task"
+                ]["id"]
+            elif key == "tags":
+                response_tags = [tag["id"] for tag in response_data["tags"]]
+                assert set(response_tags) == set(value), response_tags
+            else:
+                assert response_data.get(key) == value, response_data.get(key)
 
     @classmethod
     def detail_url(cls, key: Union[int, str]) -> str:

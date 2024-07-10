@@ -21,11 +21,57 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class TaskSerializer(serializers.ModelSerializer):
-    author_task = serializers.PrimaryKeyRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault()
-    )
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = (
+            "id",
+            "title",
+        )
+
+
+class TaskReaderSerializer(serializers.ModelSerializer):
+    author_task = UserSerializer()
+    performer_task = UserSerializer()
+    tags = TagSerializer(many=True)
+
+    class Meta:
+        model = Task
+        fields = (
+            "id",
+            "title",
+            "description",
+            "date_create",
+            "date_update",
+            "date_done_before",
+            "status",
+            "priority",
+            "author_task",
+            "performer_task",
+            "tags",
+        )
+
+
+class TaskWriterSerializer(serializers.ModelSerializer):
+    performer_task = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+
+    class Meta:
+        model = Task
+        fields = (
+            "title",
+            "description",
+            "date_done_before",
+            "status",
+            "priority",
+            "performer_task",
+            "tags",
+        )
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    author_task = serializers.SerializerMethodField()
+    performer_task = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -47,14 +93,14 @@ class TaskSerializer(serializers.ModelSerializer):
         validated_data["author_task"] = self.context["request"].user
         return super().create(validated_data)
 
+    def to_representation(self, instance):
+        read_serializer = TaskReaderSerializer(instance)
+        return read_serializer.data
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = (
-            "id",
-            "title",
-        )
+    def to_internal_value(self, data):
+        write_serializer = TaskWriterSerializer(data=data)
+        write_serializer.is_valid(raise_exception=True)
+        return write_serializer.validated_data
 
 
 class StatusSerializer(serializers.ModelSerializer):

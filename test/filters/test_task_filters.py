@@ -42,11 +42,11 @@ class TestUserViewSet(TestViewSetBase):
         task3.tags.add(tag3)
 
         response = self.list({"tags": tag1.title})
-        tags = [task["tags"][0] for task in response]
+        tags = [tag["title"] for task in response for tag in task["tags"]]
 
-        assert tag1.id in tags
-        assert tag2.id not in tags
-        assert tag3.id not in tags
+        assert tag1.title in tags
+        assert tag2.title not in tags
+        assert tag3.title not in tags
 
     def test_filter_author_task(self):
         task1 = TaskFactory.create()
@@ -54,11 +54,11 @@ class TestUserViewSet(TestViewSetBase):
         task3 = TaskFactory.create()
 
         response = self.list({"author_task": task1.author_task.id})
-        author_task = [task["author_task"] for task in response]
+        author_task = [task["author_task"]["username"] for task in response]
 
-        assert task1.author_task.id in author_task
-        assert task2.author_task.id not in author_task
-        assert task3.author_task.id not in author_task
+        assert task1.author_task.username in author_task
+        assert task2.author_task.username not in author_task
+        assert task3.author_task.username not in author_task
 
     def test_filter_performer_task(self):
         task1 = TaskFactory.create()
@@ -66,8 +66,8 @@ class TestUserViewSet(TestViewSetBase):
         task3 = TaskFactory.create()
 
         response = self.list({"performer_task": task1.performer_task.id})
-        performer_task = [task["performer_task"] for task in response]
+        performer_task = [task["performer_task"]["username"] for task in response]
 
-        assert task1.performer_task.id in performer_task
-        assert task2.performer_task.id not in performer_task
-        assert task3.performer_task.id not in performer_task
+        assert task1.performer_task.username in performer_task
+        assert task2.performer_task.username not in performer_task
+        assert task3.performer_task.username not in performer_task
