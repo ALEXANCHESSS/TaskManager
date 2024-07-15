@@ -39,7 +39,7 @@ class StatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Status
 
-    status = factory.LazyAttribute(lambda _: faker.word())
+    status = factory.LazyAttribute(lambda _: faker.unique.word())
 
 
 class TaskFactory(factory.django.DjangoModelFactory):
@@ -63,4 +63,4 @@ class TagFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Tag
 
-    title = factory.LazyAttribute(lambda _: faker.word())
+    title = factory.LazyAttribute(lambda _: faker.unique.word())
