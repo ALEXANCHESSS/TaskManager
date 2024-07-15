@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from main.models.status import Status
+
 from .models.tag import Tag
 from .models.task import Task
 from .models.user import User
@@ -27,4 +29,10 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(Task, site=task_manager_admin_site)
 class TaskAdmin(admin.ModelAdmin):
     list_display = ["title", "status", "priority", "author_task"]
+    pass
+
+
+@admin.register(Status, site=task_manager_admin_site)
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ["status"]
     pass
