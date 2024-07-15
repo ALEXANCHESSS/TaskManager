@@ -12,13 +12,23 @@ from .base import faker
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
+        skip_postgeneration_save = True
 
     username = factory.LazyAttribute(lambda _: faker.unique.user_name())
-    password = factory.LazyAttribute(lambda _: faker.password())
     email = factory.LazyAttribute(lambda _: faker.unique.email())
     first_name = factory.LazyAttribute(lambda _: faker.unique.first_name())
     last_name = factory.LazyAttribute(lambda _: faker.unique.last_name())
     role = factory.Iterator(User.Roles)
+
+    @factory.post_generation
+    def password(obj, create, extracted):
+        if not create:
+            return
+        if extracted:
+            obj.set_password(extracted)
+        else:
+            obj.set_password(faker.password())
+        obj.save()
 
 
 class AdminFactory(factory.django.DjangoModelFactory):
