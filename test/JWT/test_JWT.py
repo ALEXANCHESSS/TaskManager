@@ -56,7 +56,7 @@ class TestJWTAuth(APITestCase):
     def test_token_auth(self) -> None:
         client = self.client_class()
         response = client.get(self.any_api_url)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
         response = self.token_request()
         token = response.json()["access"]
