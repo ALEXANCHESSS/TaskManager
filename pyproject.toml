@@ -15,6 +15,7 @@ djangorestframework = "^3.15.1"
 django-filter = "^24.2"
 drf-yasg = "^1.21.7"
 djangorestframework-simplejwt = "^5.3.1"
+rollbar = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

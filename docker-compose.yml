@@ -11,6 +11,8 @@ services:
       - 8000:8000
     depends_on:
       - db
+    env_file:
+      - .env
     environment: &api-environment
       DJANGO_ENV: dev
       DJANGO_SECRET_KEY: secret_key
