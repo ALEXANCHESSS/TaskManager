@@ -17,4 +17,14 @@ jobs:
         env:
           COVERAGE: true
           DJANGO_ENV: test
-        run: docker-compose --file docker-compose.ci.yml run --rm api make test
+        run: docker-compose --file docker-compose.ci.yml run api make test
+
+      - name: Copy coverage report from Docker container
+        run: |
+          CONTAINER_ID=$(docker ps -aqf "name=api")
+          docker cp $CONTAINER_ID:/app/coverage.xml coverage.xml
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          format: cobertura
