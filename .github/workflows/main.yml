@@ -17,7 +17,7 @@ jobs:
         env:
           COVERAGE: true
           DJANGO_ENV: test
-        run: docker-compose --file docker-compose.ci.yml run api make test
+        run: docker compose --file docker-compose.ci.yml run api make test
 
       - name: Copy coverage report from Docker container
         run: |

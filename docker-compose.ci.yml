@@ -3,6 +3,11 @@ version: '3.7'
 x-app-config: &app-config
   DJANGO_ENV: dev
   DJANGO_SECRET_KEY: secret_key
+  EMAIL_HOST: smtp.gmail.com
+  EMAIL_HOST_USER: admin@admin.com
+  EMAIL_HOST_PASSWORD: 1234
+  EMAIL_PORT: 587
+  DEFAULT_FROM_EMAIL: from@mail.com
 
 x-db-config: &db-config
   DATABASE_NAME: postgres
@@ -19,8 +24,7 @@ services:
       context: .
       target: base
     environment:
-      <<: *app-config
-      <<: *db-config
+      <<: [*app-config, *db-config]
     depends_on:
       - db
     ports:
