@@ -6,7 +6,7 @@ from main.models.tag import Tag
 from main.models.task import Task
 from main.models.user import User
 
-from .base import faker
+from .faker import faker
 
 
 class UserFactory(factory.django.DjangoModelFactory):

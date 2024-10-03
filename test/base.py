@@ -1,31 +1,69 @@
 from http import HTTPStatus
-from faker import Faker
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 from rest_framework.response import Response
 
-from main.models.user import User
+from main.models.task import Task
+from test.faker import faker
+from test.factories import StatusFactory, UserFactory
 
 
-faker = Faker()
+class ActionClient:
+    def __init__(self, api_client: APIClient, user) -> None:
+        self.api_client = api_client
+        self.user = user
+
+    def init_user(self) -> None:
+        if self.user:
+            self.user = self.user.create()
+            self.api_client.force_authenticate(user=self.user)
+
+    def request_create_user(self, **attributes) -> Response:
+        url = reverse("user-list")
+        return self.api_client.post(url, data=attributes)  # type: ignore
+
+    def create_user(self):
+        user_attributes = UserFactory.stub().__dict__
+        response = self.request_create_user(**user_attributes)
+        assert response.status_code == HTTPStatus.CREATED, response.content
+        return response.data
+
+    def request_create_task(self, **attributes) -> Response:
+        url = reverse("task-list")
+        return self.api_client.post(url, data=attributes)  # type: ignore
+
+    def create_task(self, **attributes) -> dict:
+        user = UserFactory.create()
+        status = StatusFactory.create()
+        tag1 = faker.word()
+        task_data = {
+            "title": faker.sentence(),
+            "description": faker.sentence(),
+            "priority": faker.random_element(Task.Priority.values),
+            "status": status.id,
+            "performer_task": user.id,
+            "tags": [tag1],
+        }
+        task_data.update(attributes)
+        response = self.request_create_task(**task_data)
+        assert response.status_code == HTTPStatus.CREATED, response.content
+        return response.data
 
 
 class TestViewSetBase(APITestCase):
-    user: User
-    client: APIClient
+    action_client: Optional[ActionClient] = None
+    api_client: APIClient
     basename: str
 
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
-        cls.user = cls.create_api_user()
-        cls.client = APIClient()
-
-    @classmethod
-    def create_api_user(cls) -> User:
-        if cls.user_attributes:
-            return cls.user_attributes.create()
+        # cls.user_attributes = None
+        cls.api_client = APIClient()
+        cls.action_client = ActionClient(cls.api_client, cls.user_attributes)
+        cls.action_client.init_user()
+        cls.user = cls.action_client.user
 
     @classmethod
     def assert_details(cls, response_data, expected_data):

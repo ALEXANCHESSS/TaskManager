@@ -1,4 +1,4 @@
-from base import faker
+from test.faker import faker
 from main.models.task import Task
 from test.base import TestViewSetBase
 from test.factories import (

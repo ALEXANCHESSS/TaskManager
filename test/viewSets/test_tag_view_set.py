@@ -1,4 +1,4 @@
-from base import faker
+from test.faker import faker
 
 from test.base import TestViewSetBase
 from test.factories import AdminFactory, TagFactory, UserFactory
