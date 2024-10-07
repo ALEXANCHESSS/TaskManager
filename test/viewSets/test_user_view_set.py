@@ -1,5 +1,5 @@
-from base import faker
 from main.models.user import User
+from test.faker import faker
 from test.base import TestViewSetBase
 from test.factories import AdminFactory, UserFactory
 
